@@ -1,0 +1,167 @@
+## Tutorial completo — do zero ao funcionando
+
+---
+
+## 1. Abrir o CMD como Administrador
+
+- Aperta **Windows**
+- Digita `cmd`
+- Botão direito → **Executar como administrador**
+
+---
+
+## 2. Navegar até a pasta e instalar
+
+```cmd
+cd C:\caminho\da\pasta\lab10
+npm install mongodb@4.12 express ejs
+```
+
+---
+
+## 3. Configurar a string do Atlas no server.js
+
+Abre o `server.js` no VS Code e na primeira linha troca:
+
+```js
+const uri = 'SUA_STRING_DE_CONEXAO_ATLAS';
+```
+
+por:
+
+```js
+const uri = 'mongodb+srv://DaviRamos01:SUA_SENHA@daviramos01.3onyrqa.mongodb.net/?appName=DaviRamos01';
+```
+
+Troca `SUA_SENHA` pela senha real da sua conta do Atlas.
+
+---
+
+## 4. Rodar o servidor
+
+```cmd
+node server.js
+```
+
+Aparece no CMD:
+```
+Servidor rodando em http://localhost
+```
+
+Abre o navegador em `http://localhost` — vai cair na listagem de carros.
+
+---
+
+## 5. Testando cada funcionalidade
+
+### Cadastrar um carro
+- Vai em `http://localhost/gerencia`
+- Preenche Marca, Modelo, Ano, Quantidade
+- Clica em **Cadastrar**
+- O carro aparece na tabela abaixo
+
+### Ver a listagem
+- Vai em `http://localhost/carros`
+- Mostra todos os carros do banco
+- Se quantidade for 0 aparece **Esgotado**
+
+### Atualizar um carro
+- Na página de gerência, cada carro tem uma linha de inputs já preenchidos abaixo dele
+- Muda o valor que quiser
+- Clica em **Atualizar**
+
+### Remover um carro
+- Na página de gerência, clica em **Remover** na linha do carro
+- Ele some da tabela e do banco
+
+### Vender um carro
+- Na página de gerência, clica em **Vender**
+- A quantidade diminui 1
+- Quando chegar em 0, o botão Vender fica desativado e aparece ⚠️ Esgotado
+
+### Cadastrar usuário
+- Vai em `http://localhost/cadastro`
+- Preenche Nome, Login, Senha
+- Clica em **Cadastrar**
+- Redireciona pro login
+
+### Login
+- Vai em `http://localhost/login`
+- Preenche Login e Senha
+- Se correto → vai pra gerência
+- Se errado → aparece "Login inválido"
+
+---
+
+## 6. Parar e reiniciar o servidor
+
+Para parar:
+```
+Ctrl + C
+```
+
+Para subir de novo:
+```cmd
+node server.js
+```
+
+> Sempre que mudar algum arquivo, precisa parar e rodar de novo.
+
+---
+
+## 7. Se não conectar no Atlas
+
+Vai no site **mongodb.com** → seu projeto → **Network Access** → **Add IP Address** → **Allow Access from Anywhere** → **Confirm**
+
+Depois para e roda o servidor de novo.
+
+---
+
+## 8. O que cada arquivo faz
+
+**`server.js`** — o cérebro. Define todas as rotas e faz as operações no banco.
+
+**`views/carros.ejs`** — página de listagem pública. Só lê os dados, não tem formulários de edição.
+
+**`views/gerencia.ejs`** — página de gerência. Tem tudo: cadastrar, atualizar, remover, vender.
+
+**`views/cadastro.ejs`** — formulário de cadastro de usuário.
+
+**`views/login.ejs`** — formulário de login.
+
+**`public/style.css`** — estilo de todas as páginas.
+
+---
+
+## 9. As 4 operações do banco — o que cai na prova
+
+```js
+// Criar
+await db.collection('carros').insertOne({ marca, modelo, ano, qtde_disponivel });
+
+// Ler
+await db.collection('carros').find().toArray();
+
+// Atualizar
+await db.collection('carros').updateOne(
+  { _id: new ObjectId(id) },
+  { $set: { marca, modelo, ano, qtde_disponivel } }
+);
+
+// Deletar
+await db.collection('carros').deleteOne({ _id: new ObjectId(id) });
+```
+
+---
+
+## 10. Erros mais comuns
+
+**Porta 80 negada** → CMD não está como Administrador. Fecha e abre como Admin.
+
+**`Cannot find module 'express'`** → rodou `npm install`? Se não, roda agora.
+
+**Página abre mas tabela vazia** → banco vazio, normal. Cadastra um carro pra testar.
+
+**Não conecta no Atlas** → libera o IP no Network Access, ou a senha está errada na URI.
+
+**Mudei o código mas não mudou no navegador** → precisa parar (`Ctrl+C`) e rodar `node server.js` de novo.
